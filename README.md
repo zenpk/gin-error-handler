@@ -22,34 +22,35 @@ There are 3 meaningful tags, others stand for default values:
 
 ```go
 type User struct {
-Name string `json:"name,omitempty"`
+	Name string `json:"name,omitempty"`
 }
 
 type UserLoginResp struct {
-Seq  int64  `json:"seq" eh:"-1"`                      // the default seq is -1 when an uncaught error happened
-Code int64  `json:"code" eh:"pre: CodeUncaughtError"` // will be filled with Preset.CodeUncaughtError (551)
-Msg  string `json:"msg" eh:"err"`            // will eventually be err.Error()
-User *User  `json:"user,omitempty" eh:"nil"` // will omit this field
+	Seq  int64  `json:"seq" eh:"-1"`                      // the default seq is -1 when an uncaught error happened
+	Code int64  `json:"code" eh:"pre: CodeUncaughtError"` // will be filled with Preset.CodeUncaughtError (551)
+	Msg  string `json:"msg" eh:"err"`                     // will eventually be err.Error()
+	User *User  `json:"user,omitempty" eh:"nil"`          // will omit this field
 }
 
 func handler(c *gin.Context) {
-// some error occurred
-err := errors.New("something went wrong")
-eh.Handle(c, UserLoginResp{}, err)
+	// create a new handler with *gin.Context and your JSON interface
+	errHandler := eh.JSONHandler{
+		C: c,
+		V: UserLoginResp{},
+	}
+	err := errors.New("something went wrong") // some error occurred
+	errHandler.Handle(err)                    // handle the error
 }
 
 func main() {
-// make a mock request
-req, _ := http.NewRequest(http.MethodGet, "/err", nil)
-// record the mock request
-rec := httptest.NewRecorder()
-// use Gin to handle the request
-r := gin.Default()
-r.GET("/err", handler)
-r.ServeHTTP(rec, req)
-fmt.Println(rec.Body.String())
+	req, _ := http.NewRequest(http.MethodGet, "/err", nil) // make a mock request
+	rec := httptest.NewRecorder()                          // record the mock request
+	// use Gin to handle the request
+	r := gin.Default()
+	r.GET("/err", handler)
+	r.ServeHTTP(rec, req)
+	fmt.Println(rec.Body.String())
 }
-
 ```
 
 ### Output

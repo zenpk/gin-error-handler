@@ -21,16 +21,18 @@ type UserLoginResp struct {
 }
 
 func handler(c *gin.Context) {
-	// some error occurred
-	err := errors.New("something went wrong")
-	eh.Handle(c, UserLoginResp{}, err)
+	// create a new handler with *gin.Context and your JSON interface
+	errHandler := eh.JSONHandler{
+		C: c,
+		V: UserLoginResp{},
+	}
+	err := errors.New("something went wrong") // some error occurred
+	errHandler.Handle(err)                    // handle the error
 }
 
 func main() {
-	// make a mock request
-	req, _ := http.NewRequest(http.MethodGet, "/err", nil)
-	// record the mock request
-	rec := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodGet, "/err", nil) // make a mock request
+	rec := httptest.NewRecorder()                          // record the mock request
 	// use Gin to handle the request
 	r := gin.Default()
 	r.GET("/err", handler)

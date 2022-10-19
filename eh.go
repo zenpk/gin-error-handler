@@ -8,9 +8,14 @@ import (
 	"strconv"
 )
 
+type JSONHandler struct {
+	C *gin.Context
+	V interface{}
+}
+
 // Handle return the given interface with tagged values and error messages
-func Handle(c *gin.Context, v interface{}, err error) {
-	ref := reflect.ValueOf(&v).Elem()
+func (h *JSONHandler) Handle(err error) {
+	ref := reflect.ValueOf(&h.V).Elem()
 	refCopy := reflect.New(ref.Elem().Type()).Elem()
 	for i := 0; i < ref.Elem().NumField(); i++ {
 		tag := ref.Elem().Type().Field(i).Tag.Get("eh")
@@ -46,7 +51,7 @@ func Handle(c *gin.Context, v interface{}, err error) {
 			// other implementations...
 		}
 	}
-	log.Printf("uncaught error: %v, returned JSON\n", err) // Do whatever you want here
+	log.Printf("uncaught error: %v, returned JSON\n", err) // do whatever you want here
 	ref.Set(refCopy)
-	c.JSON(http.StatusOK, v)
+	h.C.JSON(http.StatusOK, h.V)
 }
