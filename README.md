@@ -10,9 +10,9 @@ Define your Data Transfer Object with "eh" tags.
 
 There are 3 meaningful tags, others stand for default values:
 
-1. `err` - the field with this tag will be returned as a string, its value equals to `err.Error()`
-2. `nil` - the field with this tag will be omitted
-3. `pre: ` - the field will be set the same as the variable in `Preset` struct with the same name, e.g. field
+1. `eh:"err"` - the field with this tag will be returned as a string, its value equals to `err.Error()`
+2. `eh:"nil"`||`eh:""` - the field with these two tags will remain the default value of the type
+3. `eh:"pre: "` - the field will be set the same as the variable in `Preset` struct with the same name, e.g. field
    with `pre: CodeOK` will be set with `Preset.CodeOK` (200,
    int64). Be aware of the spelling: `p`,`r`,`e`,`colon`,`space`. The type of the original field and the according "
    Preset variable" must be
@@ -21,6 +21,17 @@ There are 3 meaningful tags, others stand for default values:
 ## Example
 
 ```go
+package main
+
+import (
+	"errors"
+	"fmt"
+	eh "gin-error-handler"
+	"github.com/gin-gonic/gin"
+	"net/http"
+	"net/http/httptest"
+)
+
 type User struct {
 	Name string `json:"name,omitempty"`
 }

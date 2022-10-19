@@ -19,11 +19,11 @@ func (h *JSONHandler) Handle(err error) {
 	refCopy := reflect.New(ref.Elem().Type()).Elem()
 	for i := 0; i < ref.Elem().NumField(); i++ {
 		tag := ref.Elem().Type().Field(i).Tag.Get("eh")
-		if tag == "err" {
-			refCopy.Field(i).SetString(err.Error())
+		if len(tag) <= 0 || tag == "nil" {
 			continue
 		}
-		if tag == "nil" {
+		if tag == "err" {
+			refCopy.Field(i).SetString(err.Error())
 			continue
 		}
 		if len(tag) > 5 && tag[0:5] == "pre: " {
