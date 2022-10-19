@@ -28,7 +28,7 @@ type JSONHandler struct {
 }
 
 // Handle return the given interface with tagged values and error messages
-func (h *JSONHandler) Handle(err error) {
+func (h *JSONHandler) Handle(err error, httpCode ...int) {
 	ref := reflect.ValueOf(&h.V).Elem()
 	refCopy := reflect.New(ref.Elem().Type()).Elem()
 	for i := 0; i < ref.Elem().NumField(); i++ {
@@ -67,5 +67,9 @@ func (h *JSONHandler) Handle(err error) {
 	}
 	log.Printf("uncaught error: %v, returned JSON\n", err) // do whatever you want here
 	ref.Set(refCopy)
+	if len(httpCode) > 0 {
+		h.C.JSON(httpCode[0], h.V)
+		return
+	}
 	h.C.JSON(http.StatusOK, h.V)
 }

@@ -50,7 +50,8 @@ func handler(c *gin.Context) {
       V: UserLoginResp{},
    }
    err := errors.New("something went wrong") // some error occurred
-   errHandler.Handle(err)                    // handle the error
+   errHandler.Handle(err, http.StatusInternalServerError) // handle the error
+   //errHandler.Handle(err) // will use http.StatusOK if you don't specify the code                // handle the error
 }
 
 func main() {
