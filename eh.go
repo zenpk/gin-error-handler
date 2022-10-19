@@ -40,8 +40,8 @@ func (h *JSONHandler) Handle(err error) {
 			refCopy.Field(i).SetString(err.Error())
 			continue
 		}
-		if len(tag) > 5 && tag[0:5] == "pre: " {
-			field := tag[5:]
+		if len(tag) > 4 && tag[0:4] == "pre:" {
+			field := tag[4:]
 			presetVal := reflect.ValueOf(Preset).FieldByName(field)
 			refCopy.Field(i).Set(presetVal)
 			continue
