@@ -19,7 +19,7 @@ func (h *JSONHandler) Handle(err error) {
 	refCopy := reflect.New(ref.Elem().Type()).Elem()
 	for i := 0; i < ref.Elem().NumField(); i++ {
 		tag := ref.Elem().Type().Field(i).Tag.Get("eh")
-		if len(tag) <= 0 || tag == "nil" {
+		if len(tag) <= 0 {
 			continue
 		}
 		if tag == "err" {
